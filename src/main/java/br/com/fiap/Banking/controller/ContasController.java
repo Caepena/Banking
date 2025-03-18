@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.com.fiap.Banking.model.Contas;
-import br.com.fiap.Banking.model.Deposito;
-import br.com.fiap.Banking.model.Pix;
-import br.com.fiap.Banking.model.Saque;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -86,67 +84,12 @@ public class ContasController {
         return ResponseEntity.ok(conta);
     }
 
-    // Endpoint para realizar o saque
-    @PostMapping("/contas/saque")
-    public ResponseEntity<Contas> saque(@RequestBody Saque saqueRequest) {
-        log.info("Realizando saque para a conta número: " + saqueRequest.getNumero());
-
-        if (saqueRequest.getValor() <= 0) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        Contas conta = getContasByNumero(saqueRequest.getNumero());
-
-        if (conta.getSaldo() < saqueRequest.getValor()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        }
-
-        conta.setSaldo(conta.getSaldo() - saqueRequest.getValor());
-        return ResponseEntity.ok(conta);
-    }
-
-    private Contas getContasByNumero(Long numero) {
+    public Contas getContasByNumero(Long numero) {
         return contas.stream()
                 .filter(c -> c.getNumero().equals(numero))
                 .findFirst()
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Conta não encontrada"));
-    }
-
-    // Endpoint para realizar o PIX
-    @PostMapping("/contas/pix")
-    public ResponseEntity<Contas> pix(@RequestBody Pix pixRequest) {
-        log.info("Realizando Pix: Transferindo de conta número " + pixRequest.getNumeroOrigem() + " para conta número "
-                + pixRequest.getNumeroDestino());
-
-        if (pixRequest.getValor() <= 0) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        Contas contaOrigem = getContasByNumero(pixRequest.getNumeroOrigem());
-        Contas contaDestino = getContasByNumero(pixRequest.getNumeroDestino());
-
-        if (contaOrigem.getSaldo() < pixRequest.getValor()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
-        contaOrigem.setSaldo(contaOrigem.getSaldo() - pixRequest.getValor());
-        contaDestino.setSaldo(contaDestino.getSaldo() + pixRequest.getValor());
-        return ResponseEntity.ok(contaDestino);
-    }
-
-    // Endpoint para realizar o depósito
-    @PostMapping("/contas/deposito")
-    public ResponseEntity<Contas> deposito(@RequestBody Deposito depositoRequest) {
-        log.info("Realizando depósito para a conta número: " + depositoRequest.getNumero());
-
-        if (depositoRequest.getValor() <= 0) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        Contas conta = getContasByNumero(depositoRequest.getNumero());
-        conta.setSaldo(conta.getSaldo() + depositoRequest.getValor());
-        return ResponseEntity.ok(conta);
     }
 
     private Contas getContasByCPF(String CPF) {
