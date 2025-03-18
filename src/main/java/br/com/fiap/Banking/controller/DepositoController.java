@@ -24,6 +24,7 @@ public class DepositoController {
         log.info("Realizando depósito para a conta número: " + depositoRequest.getNumero());
 
         if (depositoRequest.getValor() <= 0) {
+            log.info("Não é possivel fazer um depósito de um valor negativo ou igual a zero.");
             return ResponseEntity.badRequest().body(null);
         }
 

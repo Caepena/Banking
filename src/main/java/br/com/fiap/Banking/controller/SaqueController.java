@@ -31,6 +31,7 @@ public class SaqueController {
         Contas conta = contasController.getContasByNumero(saqueRequest.getNumero());
 
         if (conta.getSaldo() < saqueRequest.getValor()) {
+            log.info("A conta não tem saldo suficiente para realizar o saque.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 

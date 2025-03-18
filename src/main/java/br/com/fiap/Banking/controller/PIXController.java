@@ -32,6 +32,7 @@ public class PIXController {
         Contas contaDestino = contasController.getContasByNumero(pixRequest.getNumeroDestino());
 
         if (contaOrigem.getSaldo() < pixRequest.getValor()) {
+            log.info("A conta não tem saldo suficiente para realizar a transferência");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
