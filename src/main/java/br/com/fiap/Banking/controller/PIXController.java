@@ -6,14 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.fiap.Banking.model.Contas;
 import br.com.fiap.Banking.model.Pix;
 
 @RestController
-@RequestMapping("/transacoes/pix")
 public class PIXController {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final ContasController contasController;
@@ -22,7 +20,7 @@ public class PIXController {
         this.contasController = contasController;
     }
 
-    @PostMapping
+    @PostMapping("/transacoes/pix")
     public ResponseEntity<Contas> pix(@RequestBody Pix pixRequest) {
         log.info("Realizando Pix: Transferindo de conta número " + pixRequest.getNumeroOrigem() + " para conta número " + pixRequest.getNumeroDestino());
 

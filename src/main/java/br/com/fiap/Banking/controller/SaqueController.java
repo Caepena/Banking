@@ -6,14 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.fiap.Banking.model.Contas;
 import br.com.fiap.Banking.model.Saque;
 
 @RestController
-@RequestMapping("/transacoes/saque")
 public class SaqueController {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final ContasController contasController;
@@ -22,7 +20,7 @@ public class SaqueController {
         this.contasController = contasController;
     }
 
-    @PostMapping
+    @PostMapping("/transacoes/saque")
     public ResponseEntity<Contas> saque(@RequestBody Saque saqueRequest) {
         log.info("Realizando saque para a conta número: " + saqueRequest.getNumero());
 
@@ -33,7 +31,7 @@ public class SaqueController {
         Contas conta = contasController.getContasByNumero(saqueRequest.getNumero());
 
         if (conta.getSaldo() < saqueRequest.getValor()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
         conta.setSaldo(conta.getSaldo() - saqueRequest.getValor());
